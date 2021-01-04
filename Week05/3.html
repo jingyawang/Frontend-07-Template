@@ -1,0 +1,37 @@
+<script>
+    // Proxy 简单实现 vue3.0 reactive 方法 // 事件监听
+    let callbacks = []
+
+    let object = {
+        a: 1,
+        b: 2
+    }
+
+    let po = reactive(object)
+
+    effect(() => {
+        console.log(po.a, '...effect....')
+    })
+
+    
+    function effect(callback) {
+        callbacks.push(callback)
+    }
+
+    function reactive(object) {
+        return new Proxy(object, {
+            set(obj, prop, val) {
+                obj[prop] = val
+                for(let callback of callbacks) {
+                    callback()
+                }
+                // console.log(obj, prop, val)
+                return obj[prop]
+            },
+            get(obj, prop) {
+                console.log(obj, prop)
+                return obj[prop]
+            }
+        })
+    }
+</script>
